@@ -8,6 +8,7 @@ upload_to_database.py
 hashed_pw.pkl
 .streamlit
 test.py
+fast_summit.bash
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
