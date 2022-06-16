@@ -7,10 +7,12 @@ import database as db
 # Fontend
 import streamlit as st
 from src.visual import visual_diseases,visual_dataset
-from src.utils import seleted_model
+from src.utils import get_image_from_lottie,crop_image,load_result,load_model
+from streamlit_lottie import st_lottie
 
 # Backend
 from PIL import Image
+import numpy as np
 
 
 #emoji: 
@@ -68,5 +70,39 @@ if authentication_status:
     
     st.sidebar.header('User Input Features')
     selected_box = st.sidebar.selectbox('Model',('Select model','Efficient_B0_256'),help="Model 1: ... - Model 2: ...")
-    seleted_model(selected_box)
+    if selected_box == 'Select model':
+        st.markdown("""
+        <span style = 'font-size:30px;'> 
+        let's sellect
+        </span>
+        <span style = 'color:pink;font-size:40px;'>
+        Model
+        </span>
+        <span style = 'font-size:30px;'> 
+        !
+        </span>
+        """,
+        unsafe_allow_html=True)
 
+        st_lottie(get_image_from_lottie(url = "https://assets8.lottiefiles.com/packages/lf20_mxzt4vtn.json"), key = "selectmodel", height=400)
+        with st.sidebar:
+            st_lottie(get_image_from_lottie(url = 'https://assets9.lottiefiles.com/private_files/lf30_zbhl9hod.json'), key='load', height=100)
+    else:
+        selected_image = st.sidebar.file_uploader('Upload image from PC',type=['png', 'jpg'],help='Type of image should be PNG or JPEG')
+    
+    if selected_box == 'Efficient_B0_256':
+
+        if selected_image:
+            if st.sidebar.checkbox('Crop image',value=True):
+                crop_image = crop_image(selected_image)
+                crop_image = np.array(crop_image.convert("RGB"))
+                crop_image = crop_image.astype(np.int16)
+            else:
+                crop_image = Image.open(selected_image)
+                crop_image = np.array(crop_image.convert("RGB"))
+            
+            # st_lottie(get_image_from_lottie(url = 'https://assets6.lottiefiles.com/private_files/lf30_dvttvgu0.json'), key = 'wait',height=200,width=200)
+            
+            st.write('##### Results:')
+            load_model(selected_box)
+            results = load_result(selected_box,crop_image)

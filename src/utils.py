@@ -3,7 +3,27 @@ from json import load
 
 import requests
 import streamlit as st
-from streamlit_lottie import st_lottie
+import timm
+import torch
+import os
+import urllib
+import cv2
+from PIL import Image
+import albumentations as A
+from src.model import MelanomaNet,BaseNetwork,MetaMelanoma
+from streamlit_cropper import st_cropper
+from pytorch_grad_cam import GradCAM, \
+    ScoreCAM, \
+    GradCAMPlusPlus, \
+    AblationCAM, \
+    XGradCAM, \
+    EigenCAM, \
+    EigenGradCAM, \
+    LayerCAM, \
+    FullGrad
+from pytorch_grad_cam.utils.image import show_cam_on_image, \
+    deprocess_image, \
+    preprocess_image
 
 
 # --- LOTTIE ---
@@ -33,23 +53,77 @@ def get_image_from_lottie(url=None,filepath=None):
         return None #FIXME:
     else:
         return None
+    return
 
-def seleted_model(model='Select model'):
+def crop_image(image):
+    '''
+    '''
+    img = Image.open(image)
+    realtime_update = st.sidebar.checkbox(label="Update in Real Time", value=True)
+    crop_image = st_cropper(img,aspect_ratio=(1,1),box_color='#0000FF',realtime_update=True)
+    return crop_image
 
-    if model == 'Select model':
-        st.markdown("""
-        <span style = 'font-size:30px;'> 
-        let's sellect
-        </span>
-        <span style = 'color:pink;font-size:40px;'>
-        Model
-        </span>
-        <span style = 'font-size:30px;'> 
-        !
-        </span>
-        """,
-        unsafe_allow_html=True)
+def draw_heatmap(model_name,image,Cam=GradCAM):
+    '''
+    '''
+    model = timm.create_model(model_name,image,Cam=GradCAM)
 
-        st_lottie(get_image_from_lottie("https://assets8.lottiefiles.com/packages/lf20_mxzt4vtn.json"), key = "selectmodel", height=400)
-        with st.sidebar:
-            st_lottie(get_image_from_lottie('https://assets9.lottiefiles.com/private_files/lf30_zbhl9hod.json'), key='load', height=100)
+@st.cache(allow_output_mutation=True,ttl=3600*24,max_entries=1,show_spinner=False)
+def load_model(model_name):
+    if model_name == 'Efficient_B0_256':
+        model_name = 'efficientnet_b0'
+        os.makedirs('model',exist_ok = True)
+        with st.spinner("Downloading model... this may take awhile! \n Don't stop it!"):
+            url_init = 'https://github.com/dinhsang1999/streamlit-skin-diseases-classifications-cloud/releases/download/efficientnet_b0/'
+            for i in range(5):
+                url = url_init + 'efficientnet_b0_fold' + str(i) + '.pth'
+                path_out = os.path.join('model','efficientnet_b0_fold' + str(i) + '.pth')
+                load_model(url,path_out)
+
+def load_result(model_name,image,meta_features=None):
+    '''
+    '''
+    accuracy_5 = []
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    if model_name == 'Efficient_B0_256':
+        with st.spinner("Calculating results..."):
+            for i in range(5):
+                model = BaseNetwork('efficientnet_b0')
+                model.to(device)
+                path_model = os.path.join('model', 'efficientnet_b0_fold' + str(i) + '.pth')
+                model_loader = torch.load(path_model)
+                #delete modul into model to train 1 gpu
+                model_loader = {key.replace("module.", ""): value for key, value in model_loader.items()}
+                model.load_state_dict(model_loader)
+                # Switch model to evaluation mode
+                model.eval()
+                #Transform image
+                list_agu = [A.Normalize()]
+                transform = A.Compose(list_agu)
+
+                img = cv2.resize(image,(256,256))
+                transformed = transform(image=img)
+                img = transformed["image"]
+
+                img = img.transpose(2, 0, 1)
+                img = torch.tensor(img).float()
+                img = img.to(device)
+                img = img.view(1, *img.size()).to(device)
+
+                with torch.no_grad():
+                    pred = model(img.float())
+                
+                pred = torch.nn.functional.softmax(pred, dim=1)
+                pred = pred.cpu().detach().numpy()
+                accuracy_5.append(pred)
+
+        st.success('Done!!!')
+        return accuracy_5
+
+
+def load_model(url,path_out):
+    urllib.request.urlretrieve(url, path_out)
+
+if __name__ == '__main__':
+    load_result('Efficient_B0_256')
+

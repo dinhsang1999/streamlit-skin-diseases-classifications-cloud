@@ -9,6 +9,7 @@ hashed_pw.pkl
 .streamlit
 test.py
 fast_summit.bash
+model
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
