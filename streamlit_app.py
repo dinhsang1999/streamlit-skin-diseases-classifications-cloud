@@ -106,3 +106,4 @@ if authentication_status:
             st.write('##### Results:')
             load_model(selected_box)
             results = load_result(selected_box,crop_image)
+            st.write(results)
