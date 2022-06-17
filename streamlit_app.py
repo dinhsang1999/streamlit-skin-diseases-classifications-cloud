@@ -13,6 +13,7 @@ from streamlit_lottie import st_lottie
 # Backend
 from PIL import Image
 import numpy as np
+import pandas as pd
 
 
 #emoji: 
@@ -101,9 +102,15 @@ if authentication_status:
                 crop_image = Image.open(selected_image)
                 crop_image = np.array(crop_image.convert("RGB"))
             
-            # st_lottie(get_image_from_lottie(url = 'https://assets6.lottiefiles.com/private_files/lf30_dvttvgu0.json'), key = 'wait',height=200,width=200)
-            
             st.write('##### Results:')
             load_model(selected_box)
-            results = load_result(selected_box,crop_image)
-            st.write(results)
+            if st.button('Show result'):
+                results = load_result(selected_box,crop_image)
+                df_disease = pd.DataFrame()
+                df_disease = df_disease.reset_index(drop=True)
+                df_disease['diseases'] = ['MEL','NV','BCC','BKL','AK','SCC','VASC','DF','unknown']
+                for i in range(5):
+                    results[i][0] = np.around(results[i][0],4)*100
+                    df_disease['trainer_' + str(i)] = results[i][0]
+                st.dataframe(df_disease.style.highlight_max(axis=0,color='pink',subset=['trainer_0','trainer_1','trainer_2','trainer_3','trainer_4']))
+                
