@@ -127,7 +127,7 @@ def heatmap(model_name,image,Cam=GradCAM):
     '''
     image_ori = image
     if model_name == 'Efficient_B0_256':
-        model = BaseNetwork('efficientnet_b0')
+        model = timm.create_model('efficientnet_b0',pretrained=True,num_classes=9)
         model.load_state_dict(torch.load(os.path.join('model',random.choice(os.listdir('model'))),map_location=torch.device('cpu')),strict=False)
         target_layers = [model.conv_head]
         cam_image, image_scale = back_heatmap(model,image,target_layers,Cam)
