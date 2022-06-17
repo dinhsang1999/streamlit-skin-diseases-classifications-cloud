@@ -157,7 +157,7 @@ def back_heatmap(model,image,target_layers,Cam):
                                     std=[0.229, 0.224, 0.225])
     with cam_algorithm(model=model,
                         target_layers=target_layers,
-                        use_cuda=True) as cam:
+                        use_cuda=False) as cam:
             cam.batch_size = 30
             grayscale_cam = cam(input_tensor=input_tensor,
                                 targets=None,
