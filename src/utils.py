@@ -60,7 +60,7 @@ def crop_image(image):
     '''
     img = Image.open(image)
     realtime_update = st.sidebar.checkbox(label="Update in Real Time", value=True)
-    crop_image = st_cropper(img,aspect_ratio=(1,1),box_color='#0000FF',realtime_update=True)
+    crop_image = st_cropper(img,aspect_ratio=(1,1),box_color='#0000FF',realtime_update=realtime_update)
     return crop_image
 
 def draw_heatmap(model_name,image,Cam=GradCAM):
