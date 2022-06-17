@@ -3,11 +3,13 @@ from json import load
 
 import requests
 import streamlit as st
+import numpy as np
 import timm
 import torch
 import os
 import urllib
 import cv2
+import random
 from PIL import Image
 import albumentations as A
 from src.model import MelanomaNet,BaseNetwork,MetaMelanoma
@@ -119,6 +121,51 @@ def load_result(model_name,image,meta_features=None):
 
         st.success('Done!!!')
         return accuracy_5
+
+def heatmap(model_name,image,Cam=GradCAM):
+    '''
+    '''
+    image_ori = image
+    if model_name == 'Efficient_B0_256':
+        model = BaseNetwork('efficientnet_b0')
+        model.load_state_dict(torch.load(os.path.join('model',random.choice(os.listdir('model')))),strict=False)
+        target_layers = [model.conv_head]
+        cam_image, image_scale = back_heatmap(model,image,target_layers,Cam)
+    
+    return cam_image, image_ori, image_scale
+        
+
+def back_heatmap(model,image,target_layers,Cam):
+    '''
+    '''
+    image = cv2.resize(image,(256,256))
+    image_scale = image
+    cam_algorithm = Cam #GradCAM, \
+                                    #     ScoreCAM, \
+                                    #     GradCAMPlusPlus, \
+                                    #     AblationCAM, \
+                                    #     XGradCAM, \
+                                    #     EigenCAM, \
+                                    #     EigenGradCAM, \
+                                    #     LayerCAM, \
+                                    #     FullGrad
+    image = image[:, :, ::-1]
+    image = np.float32(image) / 255
+    input_tensor = preprocess_image(image,
+                                    mean=[0.485, 0.456, 0.406],
+                                    std=[0.229, 0.224, 0.225])
+    with cam_algorithm(model=model,
+                        target_layers=target_layers,
+                        use_cuda=True) as cam:
+            cam.batch_size = 30
+            grayscale_cam = cam(input_tensor=input_tensor,
+                                targets=None,
+                                aug_smooth=False,
+                                eigen_smooth=False)
+            grayscale_cam = grayscale_cam[0, :]
+            cam_image = show_cam_on_image(image, grayscale_cam, use_rgb=True)
+    return cam_image, image_scale
+
 
 if __name__ == '__main__':
     load_result('Efficient_B0_256')

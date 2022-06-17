@@ -7,13 +7,22 @@ import database as db
 # Fontend
 import streamlit as st
 from src.visual import visual_diseases,visual_dataset
-from src.utils import get_image_from_lottie,crop_image,load_result,load_model
+from src.utils import get_image_from_lottie,crop_image,load_result,load_model,heatmap
 from streamlit_lottie import st_lottie
 
 # Backend
 from PIL import Image
 import numpy as np
 import pandas as pd
+from pytorch_grad_cam import GradCAM, \
+    ScoreCAM, \
+    GradCAMPlusPlus, \
+    AblationCAM, \
+    XGradCAM, \
+    EigenCAM, \
+    EigenGradCAM, \
+    LayerCAM, \
+    FullGrad
 
 
 #emoji: 
@@ -113,4 +122,14 @@ if authentication_status:
                     results[i][0] = np.around(results[i][0],4)*100
                     df_disease['trainer_' + str(i)] = results[i][0]
                 st.dataframe(df_disease.style.highlight_max(axis=0,color='pink',subset=['trainer_0','trainer_1','trainer_2','trainer_3','trainer_4']))
-                
+                with st.spinner("Drawing heatmap..."):
+                    image,image_ori,image_scale = heatmap(selected_box,crop_image,Cam=EigenCAM)
+                    st.write('###### Original image:')
+                    st.image(image_ori)
+                    c1,c2 = st.columns(2)
+                    with c1:
+                        st.write('###### Scaled image (256x256):')
+                        st.image(image_scale)
+                    with c2:
+                        st.write('###### Heatmap image from the model:')
+                        st.image(image)
