@@ -373,7 +373,7 @@ def selected_features(image):
     selected_features.append(std[1][0]/29.031934752265283)
     selected_features.append(std[2][0]/33.118528425542614)
 
-    selected_features = torch.tensor(selected_features).to("cuda:0")
+    selected_features = torch.tensor(selected_features)
     selected_features = torch.unsqueeze(selected_features, dim = 0)
 
     return selected_features
