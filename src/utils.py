@@ -70,7 +70,7 @@ def draw_heatmap(model_name,image,Cam=GradCAM):
     '''
     model = timm.create_model(model_name,image,Cam=GradCAM)
 
-@st.cache(allow_output_mutation=True,ttl=3600*24,max_entries=1,show_spinner=False)
+@st.cache(allow_output_mutation=True,ttl=3600*24,max_entries=2,show_spinner=False)
 def load_model(model_name):
     if model_name == 'Efficient_B0_256':
         model_name = 'efficientnet_b0'
@@ -93,13 +93,13 @@ def load_result(model_name,image,meta_features=None):
                 model = BaseNetwork('efficientnet_b0')
                 model.to(device)
                 path_model = os.path.join('model', 'efficientnet_b0_fold' + str(i) + '.pth')
-                model_loader = torch.load(path_model,torch.device('cpu'))
-                #delete modul into model to train 1 gpu
+                model_loader = torch.load(path_model,map_location=torch.device('cpu'))
+                # Delete modul into model to train 1 gpu
                 model_loader = {key.replace("module.", ""): value for key, value in model_loader.items()}
                 model.load_state_dict(model_loader)
                 # Switch model to evaluation mode
                 model.eval()
-                #Transform image
+                # Transform image
                 list_agu = [A.Normalize()]
                 transform = A.Compose(list_agu)
 
