@@ -91,7 +91,7 @@ def load_result(model_name,image,meta_features=None):
                 model = BaseNetwork('efficientnet_b0')
                 model.to(device)
                 path_model = os.path.join('model', 'efficientnet_b0_fold' + str(i) + '.pth')
-                model_loader = torch.load(path_model)
+                model_loader = torch.load(path_model,torch.device('cpu'))
                 #delete modul into model to train 1 gpu
                 model_loader = {key.replace("module.", ""): value for key, value in model_loader.items()}
                 model.load_state_dict(model_loader)
