@@ -1,9 +1,7 @@
 import torch
 import timm
 from torch import nn
-from torchvision import models
 import torch.nn.functional as F
-from torch.cuda.amp import autocast
 
 sigmoid = nn.Sigmoid()
 

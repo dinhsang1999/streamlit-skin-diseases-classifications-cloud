@@ -78,7 +78,7 @@ def load_model(model_name):
             for i in range(5):
                 url = url_init + 'efficientnet_b0_fold' + str(i) + '.pth'
                 path_out = os.path.join('model','efficientnet_b0_fold' + str(i) + '.pth')
-                load_model(url,path_out)
+                urllib.request.urlretrieve(url, path_out)
 
 def load_result(model_name,image,meta_features=None):
     '''
@@ -119,10 +119,6 @@ def load_result(model_name,image,meta_features=None):
 
         st.success('Done!!!')
         return accuracy_5
-
-
-def load_model(url,path_out):
-    urllib.request.urlretrieve(url, path_out)
 
 if __name__ == '__main__':
     load_result('Efficient_B0_256')
