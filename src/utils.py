@@ -84,7 +84,7 @@ def load_result(model_name,image,meta_features=None):
     '''
     '''
     accuracy_5 = []
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    device = "cpu"
     if model_name == 'Efficient_B0_256':
         with st.spinner("Calculating results..."):
             for i in range(5):
