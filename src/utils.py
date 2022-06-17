@@ -70,7 +70,8 @@ def draw_heatmap(model_name,image,Cam=GradCAM):
     '''
     model = timm.create_model(model_name,image,Cam=GradCAM)
 
-@st.cache(allow_output_mutation=True,show_spinner=False)
+# @st.cache(allow_output_mutation=True,ttl=3600*24,max_entries=2,show_spinner=False)
+@st.experimental_memo(show_spinner=False)
 def load_model(model_name):
     if model_name == 'Efficient_B0_256':
         model_name = 'efficientnet_b0'
