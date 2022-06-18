@@ -6,7 +6,7 @@
 generate_key.py
 upload_to_database.py
 hashed_pw.pkl
-.streamlit
+# .streamlit
 test.py
 fast_summit.bash
 model
