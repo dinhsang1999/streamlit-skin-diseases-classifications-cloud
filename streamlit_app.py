@@ -225,13 +225,13 @@ if authentication_status:
                 crop_image = np.array(crop_image.convert("RGB"))
             
             st.write('##### Results:')
-
+            st.warning('Input-user appear new features, let change these features!!!')
             features = selected_features(crop_image)
 
             if st.button('Show result'):
 
                 results = load_result(selected_box,crop_image,meta_features=features)
-                
+
                 df_disease = pd.DataFrame()
                 df_disease = df_disease.reset_index(drop=True)
                 df_disease['diseases'] = ['MEL','NV','BCC','BKL','AK','SCC','VASC','DF','unknown']
