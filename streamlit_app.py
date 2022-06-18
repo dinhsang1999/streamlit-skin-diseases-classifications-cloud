@@ -122,7 +122,7 @@ if authentication_status:
     
     if selected_box != 'Select model':
         load_model(selected_box)
-        st.success('Download ✔️ Done!!!')
+        st.success('Download Model ✔️ Done!!!')
 
     # --- MAIN BUILD ---
     if selected_box == 'Efficient_B0_256':
