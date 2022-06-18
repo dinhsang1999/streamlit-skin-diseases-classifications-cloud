@@ -120,7 +120,7 @@ if authentication_status:
             if is_pressed["pressed"]:
                 selected_image = os.path.join('sample',sample)
     
-    if selected_box != 'Select box':
+    if selected_box != 'Select model':
         load_model(selected_box)
         st.success('Download ✔️ Done!!!')
 
