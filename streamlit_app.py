@@ -120,6 +120,7 @@ if authentication_status:
     
     if selected_box != 'Sellect box':
         load_model(selected_box)
+        st.success('Download ✔️ Done!!!')
 
     # --- MAIN BUILD ---
     if selected_box == 'Efficient_B0_256':
@@ -224,11 +225,13 @@ if authentication_status:
                 crop_image = np.array(crop_image.convert("RGB"))
             
             st.write('##### Results:')
+
+            features = selected_features(crop_image)
+
             if st.button('Show result'):
 
-                features = selected_features(crop_image)
-
                 results = load_result(selected_box,crop_image,meta_features=features)
+                
                 df_disease = pd.DataFrame()
                 df_disease = df_disease.reset_index(drop=True)
                 df_disease['diseases'] = ['MEL','NV','BCC','BKL','AK','SCC','VASC','DF','unknown']
