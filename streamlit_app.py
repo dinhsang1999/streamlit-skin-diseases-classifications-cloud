@@ -89,7 +89,7 @@ if authentication_status:
         <span style = 'font-size:20px;'> 
         let's sellect
         </span>
-        <span style = 'color:pink;font-size:25px;'>
+        <span style = 'color:#053D38;font-size:25px;'>
         Model
         </span>
         <span style = 'font-size:30px;'> 
