@@ -225,7 +225,7 @@ if authentication_status:
                 crop_image = np.array(crop_image.convert("RGB"))
             
             st.write('##### Results:')
-            st.warning('Input-user appear new features, let change these features!!!')
+            st.warning('Input-user appear new features for the model from the image, let change these features!!!')
             features = selected_features(crop_image)
 
             if st.button('Show result'):
