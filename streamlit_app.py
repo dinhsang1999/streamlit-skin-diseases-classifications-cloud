@@ -7,13 +7,15 @@ import database as db
 # Fontend
 import streamlit as st
 from src.visual import visual_diseases,visual_dataset
-from src.utils import get_image_from_lottie,crop_image,load_result,load_model,heatmap,selected_features
+from src.utils import get_image_from_lottie,crop_image,load_result,load_model,heatmap,selected_features,button_states
 from streamlit_lottie import st_lottie
 
 # Backend
 from PIL import Image
 import numpy as np
 import pandas as pd
+import random
+import os
 from pytorch_grad_cam import GradCAM, \
     ScoreCAM, \
     GradCAMPlusPlus, \
@@ -98,15 +100,31 @@ if authentication_status:
         with st.sidebar:
             st_lottie(get_image_from_lottie(url = 'https://assets9.lottiefiles.com/private_files/lf30_zbhl9hod.json'), key='load', height=100)
     else:
+        '''
+        '''
+
         selected_image = st.sidebar.file_uploader('Upload image from PC',type=['png', 'jpg'],help='Type of image should be PNG or JPEG')
-        if selected_image == None:
-            # st_lottie(get_image_from_lottie(url = "https://assets2.lottiefiles.com/packages/lf20_9p4kck7t.json"), key = 'giveme',height=200,width=300,speed=2)
+        if not selected_image:
             with st.sidebar:
                 st_lottie(get_image_from_lottie(url = 'https://assets4.lottiefiles.com/packages/lf20_urbk83vw.json'), key = 'giveimage_sidebar',height=200,width=200)
+            # --- SAMPLE ---
+            press_button = st.button("Sample image",help='Toggle to get another samples')
+            is_pressed = button_states()  # gets our cached dictionary
+            sample = 'example_6.jpg'
 
-    if selected_box == 'Efficient_B0_256':
-        
+            if press_button:
+                is_pressed.update({"pressed": not is_pressed["pressed"]})
+
+            if is_pressed["pressed"]:
+                selected_image = os.path.join('sample',sample)
+    
+    if selected_box != 'Sellect box':
         load_model(selected_box)
+
+    # --- MAIN BUILD ---
+    if selected_box == 'Efficient_B0_256':
+        '''
+        '''
         if selected_image:
             if st.sidebar.checkbox('Crop image',value=True):
                 crop_image = crop_image(selected_image)
@@ -148,9 +166,8 @@ if authentication_status:
                         st.image(image)
 
     if selected_box == 'Efficient_B0_512':
-        
-        load_model(selected_box)
-
+        '''
+        '''
         if selected_image:
             if st.sidebar.checkbox('Crop image',value=True):
                 crop_image = crop_image(selected_image)
@@ -192,7 +209,8 @@ if authentication_status:
                         st.image(image)
 
     if selected_box == 'Metadata_Efficient_B2_512':
-
+        '''
+        '''
         load_model(selected_box)
 
         if selected_image:

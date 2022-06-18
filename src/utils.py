@@ -80,7 +80,7 @@ def clear_folder(path):
 
 # @st.experimental_memo(show_spinner=False,ttl=3600*24,max_entries=2)
 # @st.cache(allow_output_mutation=True,ttl=3600*24,max_entries=2,show_spinner=False)
-@st.experimental_memo(show_spinner=False,ttl=3600*24,max_entries=2)
+@st.experimental_memo(show_spinner=False,ttl=3600*24,max_entries=5)
 def load_model(model_name):
 
     os.makedirs('model',exist_ok = True)
@@ -114,7 +114,7 @@ def load_result(model_name,image,meta_features=None):
     '''
     '''
     accuracy_5 = []
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    device = "cpu"
     if model_name == 'Efficient_B0_256':
         with st.spinner("Calculating results..."):
             for i in range(5):
@@ -377,6 +377,10 @@ def selected_features(image):
     selected_features = torch.unsqueeze(selected_features, dim = 0)
 
     return selected_features
+
+@st.cache(allow_output_mutation=True,ttl=60)
+def button_states():
+    return {"pressed": None}
 
 if __name__ == '__main__':
     load_result('Efficient_B0_256')
