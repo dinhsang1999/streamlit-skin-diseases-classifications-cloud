@@ -86,10 +86,10 @@ if authentication_status:
     selected_box = st.sidebar.selectbox('Model',('Select model','Efficient_B0_256','Efficient_B0_512','Metadata_Efficient_B2_512'),help="Model 1: ... - Model 2: ...")
     if selected_box == 'Select model':
         st.markdown("""
-        <span style = 'font-size:30px;'> 
+        <span style = 'font-size:20px;'> 
         let's sellect
         </span>
-        <span style = 'color:pink;font-size:40px;'>
+        <span style = 'color:pink;font-size:25px;'>
         Model
         </span>
         <span style = 'font-size:30px;'> 
