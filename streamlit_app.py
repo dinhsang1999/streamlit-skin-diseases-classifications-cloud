@@ -52,7 +52,7 @@ if authentication_status == None:
 
 if authentication_status:
     # --- PAGE TITLE ----
-    image_cover = Image.open('./image/cover.png')
+    image_cover = Image.open('./image/cover_1.png')
     st.image(image_cover,use_column_width= True)
 
     with st.expander('About'):
@@ -87,7 +87,7 @@ if authentication_status:
     if selected_box == 'Select model':
         st.markdown("""
         <span style = 'font-size:20px;'> 
-        let's sellect
+        Let's sellect
         </span>
         <span style = 'color:#053D38;font-size:25px;'>
         Model
