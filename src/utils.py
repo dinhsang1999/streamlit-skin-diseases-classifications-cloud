@@ -80,8 +80,8 @@ def clear_folder(path):
 
 # @st.experimental_memo(show_spinner=False,ttl=3600*24,max_entries=2)
 # @st.cache(allow_output_mutation=True,ttl=3600*24,max_entries=2,show_spinner=False)
-# @st.experimental_memo(show_spinner=False)
-@st.cache(allow_output_mutation=True,show_spinner=False)
+# @st.cache(allow_output_mutation=True,show_spinner=False)
+@st.experimental_memo(show_spinner=False)
 def load_model(model_name):
 
     os.makedirs('model',exist_ok = True)
