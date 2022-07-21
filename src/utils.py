@@ -80,19 +80,19 @@ def clear_folder(path):
 
 # @st.experimental_memo(show_spinner=False,ttl=3600*24,max_entries=2)
 # @st.cache(allow_output_mutation=True,ttl=3600*24,max_entries=2,show_spinner=False)
-@st.experimental_memo(show_spinner=False,ttl=3600*24,max_entries=5)
+@st.experimental_memo(show_spinner=False)
 def load_model(model_name):
 
     os.makedirs('model',exist_ok = True)
     clear_folder('model')
 
-    if model_name == 'Efficient_B0_256':
-        with st.spinner(" ⏳ Downloading model... this may take awhile! \n Don't stop it!"):
-            url_init = 'https://github.com/dinhsang1999/streamlit-skin-diseases-classifications-cloud/releases/download/efficientnet_b0/'
-            for i in range(5):
-                url = url_init + 'efficientnet_b0_fold' + str(i) + '.pth'
-                path_out = os.path.join('model','efficientnet_b0_fold' + str(i) + '.pth')
-                urllib.request.urlretrieve(url, path_out)
+    # if model_name == 'Efficient_B0_256':
+    #     with st.spinner(" ⏳ Downloading model... this may take awhile! \n Don't stop it!"):
+    #         url_init = 'https://github.com/dinhsang1999/streamlit-skin-diseases-classifications-cloud/releases/download/efficientnet_b0/'
+    #         for i in range(5):
+    #             url = url_init + 'efficientnet_b0_fold' + str(i) + '.pth'
+    #             path_out = os.path.join('model','efficientnet_b0_fold' + str(i) + '.pth')
+    #             urllib.request.urlretrieve(url, path_out)
 
     if model_name == 'Efficient_B0_512':
         with st.spinner(" ⏳ Downloading model... this may take awhile! \n Don't stop it!"):
@@ -115,37 +115,37 @@ def load_result(model_name,image,meta_features=None):
     '''
     accuracy_5 = []
     device = "cpu"
-    if model_name == 'Efficient_B0_256':
-        with st.spinner("Calculating results..."):
-            for i in range(5):
-                model = BaseNetwork('efficientnet_b0')
-                model.to(device)
-                path_model = os.path.join('model', 'efficientnet_b0_fold' + str(i) + '.pth')
-                model_loader = torch.load(path_model,map_location=torch.device('cpu'))
-                # Delete modul into model to train 1 gpu
-                model_loader = {key.replace("module.", ""): value for key, value in model_loader.items()}
-                model.load_state_dict(model_loader)
-                # Switch model to evaluation mode
-                model.eval()
-                # Transform image
-                list_agu = [A.Normalize()]
-                transform = A.Compose(list_agu)
+    # if model_name == 'Efficient_B0_256':
+    #     with st.spinner("Calculating results..."):
+    #         for i in range(5):
+    #             model = BaseNetwork('efficientnet_b0')
+    #             model.to(device)
+    #             path_model = os.path.join('model', 'efficientnet_b0_fold' + str(i) + '.pth')
+    #             model_loader = torch.load(path_model,map_location=torch.device('cpu'))
+    #             # Delete modul into model to train 1 gpu
+    #             model_loader = {key.replace("module.", ""): value for key, value in model_loader.items()}
+    #             model.load_state_dict(model_loader)
+    #             # Switch model to evaluation mode
+    #             model.eval()
+    #             # Transform image
+    #             list_agu = [A.Normalize()]
+    #             transform = A.Compose(list_agu)
 
-                img = cv2.resize(image,(256,256))
-                transformed = transform(image=img)
-                img = transformed["image"]
+    #             img = cv2.resize(image,(256,256))
+    #             transformed = transform(image=img)
+    #             img = transformed["image"]
 
-                img = img.transpose(2, 0, 1)
-                img = torch.tensor(img).float()
-                img = img.to(device)
-                img = img.view(1, *img.size()).to(device)
+    #             img = img.transpose(2, 0, 1)
+    #             img = torch.tensor(img).float()
+    #             img = img.to(device)
+    #             img = img.view(1, *img.size()).to(device)
 
-                with torch.no_grad():
-                    pred = model(img.float())
+    #             with torch.no_grad():
+    #                 pred = model(img.float())
                 
-                pred = torch.nn.functional.softmax(pred, dim=1)
-                pred = pred.cpu().detach().numpy()
-                accuracy_5.append(pred)
+    #             pred = torch.nn.functional.softmax(pred, dim=1)
+    #             pred = pred.cpu().detach().numpy()
+    #             accuracy_5.append(pred)
     if model_name == 'Efficient_B0_512':
         with st.spinner("Calculating results..."):
             for i in range(5):
@@ -217,13 +217,13 @@ def heatmap(model_name,image,Cam=GradCAM,meta_features=None):
     '''
     '''
     image_ori = image
-    if model_name == 'Efficient_B0_256':
-        model = timm.create_model('efficientnet_b0',pretrained=True,num_classes=9)
-        model_loader = torch.load(os.path.join('model',random.choice(os.listdir('model'))),map_location=torch.device('cpu'))
-        model_loader = {key.replace("module.", ""): value for key, value in model_loader.items()}
-        model.load_state_dict(model_loader,strict=False)
-        target_layers = [model.conv_head]
-        cam_image, image_scale = back_heatmap(model,image,256,target_layers,Cam)
+    # if model_name == 'Efficient_B0_256':
+    #     model = timm.create_model('efficientnet_b0',pretrained=True,num_classes=9)
+    #     model_loader = torch.load(os.path.join('model',random.choice(os.listdir('model'))),map_location=torch.device('cpu'))
+    #     model_loader = {key.replace("module.", ""): value for key, value in model_loader.items()}
+    #     model.load_state_dict(model_loader,strict=False)
+    #     target_layers = [model.conv_head]
+    #     cam_image, image_scale = back_heatmap(model,image,256,target_layers,Cam)
     
     if model_name == 'Efficient_B0_512':
         model = timm.create_model('efficientnet_b0',pretrained=True,num_classes=9)

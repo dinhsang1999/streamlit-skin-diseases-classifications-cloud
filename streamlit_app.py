@@ -14,8 +14,8 @@ from streamlit_lottie import st_lottie
 from PIL import Image
 import numpy as np
 import pandas as pd
-import random
-import os
+# import random
+# import os
 from pytorch_grad_cam import GradCAM, \
     ScoreCAM, \
     GradCAMPlusPlus, \
@@ -40,7 +40,7 @@ hashed_password = [user['password'] for user in users]
 
 
 authenticator = stauth.Authenticate(names, usernames, hashed_password,
-    "skin_webapp", "abcdef", cookie_expiry_days=30)
+    "skin_webapp", "abcdef", cookie_expiry_days=1)
 
 name, authentication_status, username = authenticator.login("Login", "main")
 
@@ -83,7 +83,7 @@ if authentication_status:
     authenticator.logout("Logout","sidebar")
     
     st.sidebar.header('User Input Features')
-    selected_box = st.sidebar.selectbox('Model',('Select model','Efficient_B0_256','Efficient_B0_512','Metadata_Efficient_B2_512'),help="Model 1: ... - Model 2: ...")
+    selected_box = st.sidebar.selectbox('Model',('Select model','Efficient_B0_512','Metadata_Efficient_B2_512'),help="Model 1: ... - Model 2: ...")
     if selected_box == 'Select model':
         st.markdown("""
         <span style = 'font-size:20px;'> 
@@ -104,73 +104,76 @@ if authentication_status:
     else:
         '''
         '''
-
         selected_image = st.sidebar.file_uploader('Upload image from PC',type=['png', 'jpg'],help='Type of image should be PNG or JPEG')
         if not selected_image:
             with st.sidebar:
                 st_lottie(get_image_from_lottie(url = 'https://assets4.lottiefiles.com/packages/lf20_urbk83vw.json'), key = 'giveimage_sidebar',height=200,width=200)
             # --- SAMPLE ---
-            press_button = st.button("Sample image",help='Toggle to get another samples')
-            is_pressed = button_states()  # gets our cached dictionary
-            sample = 'example_6.jpg'
+            # press_button = st.button("Sample image",help='Toggle to get another samples')
+            # is_pressed = button_states()  # gets our cached dictionary
+            # sample = 'example_6.jpg'
 
-            if press_button:
-                is_pressed.update({"pressed": not is_pressed["pressed"]})
+            # if press_button:
+            #     is_pressed.update({"pressed": not is_pressed["pressed"]})
 
-            if is_pressed["pressed"]:
-                selected_image = os.path.join('sample',sample)
+            # if is_pressed["pressed"]:
+            #     selected_image = os.path.join('sample',sample)
     
-    if selected_box != 'Select model':
-        load_model(selected_box)
-        st.success('Download Model ✔️ Done!!!')
+    # if selected_box != 'Select model':
+    #     load_model(selected_box)
+    #     st.success('Download Model ✔️ Done!!!')
 
     # --- MAIN BUILD ---
-    if selected_box == 'Efficient_B0_256':
-        '''
-        '''
-        if selected_image:
-            if st.sidebar.checkbox('Crop image',value=True):
-                crop_image = crop_image(selected_image)
-                crop_image = np.array(crop_image.convert("RGB"))
-                crop_image = crop_image.astype(np.int16)
-            else:
-                crop_image = Image.open(selected_image)
-                crop_image = np.array(crop_image.convert("RGB"))
+    # if selected_box == 'Efficient_B0_256':
+    #     '''
+    #     '''
+    #     load_model(selected_box)
+    #     st.success('Download Model ✔️ Done!!!')
+    #     if selected_image:
+    #         if st.sidebar.checkbox('Crop image',value=True):
+    #             crop_image = crop_image(selected_image)
+    #             crop_image = np.array(crop_image.convert("RGB"))
+    #             crop_image = crop_image.astype(np.int16)
+    #         else:
+    #             crop_image = Image.open(selected_image)
+    #             crop_image = np.array(crop_image.convert("RGB"))
             
-            st.write('##### Results:')
-            if st.button('Show result'):
-                results = load_result(selected_box,crop_image)
-                df_disease = pd.DataFrame()
-                df_disease = df_disease.reset_index(drop=True)
-                df_disease['diseases'] = ['MEL','NV','BCC','BKL','AK','SCC','VASC','DF','unknown']
-                for i in range(5):
-                    results[i][0] = np.around(results[i][0],4)*100
-                    df_disease['trainer_' + str(i)] = results[i][0]
-                st.dataframe(df_disease.style.highlight_max(axis=0,color='pink',subset=['trainer_0','trainer_1','trainer_2','trainer_3','trainer_4']))
-                with st.spinner("Drawing heatmap..."):
-                    image,image_ori,image_scale = heatmap(selected_box,crop_image,Cam=EigenGradCAM) #GradCAM, \
-                                    #     ScoreCAM, \
-                                    #     GradCAMPlusPlus, \
-                                    #     AblationCAM, \
-                                    #     XGradCAM, \
-                                    #     EigenCAM, \
-                                    #     EigenGradCAM, \
-                                    #     LayerCAM, \
-                                    #     FullGrad
-                    c1,c2,c3 = st.columns(3)
-                    with c1:
-                        st.header('Original')
-                        st.image(image_ori)
-                    with c2:
-                        st.header('Scaled')
-                        st.image(image_scale)
-                    with c3:
-                        st.header('Heat-map')
-                        st.image(image)
+    #         st.write('##### Results:')
+    #         if st.button('Show result'):
+    #             results = load_result(selected_box,crop_image)
+    #             df_disease = pd.DataFrame()
+    #             df_disease = df_disease.reset_index(drop=True)
+    #             df_disease['diseases'] = ['MEL','NV','BCC','BKL','AK','SCC','VASC','DF','unknown']
+    #             for i in range(5):
+    #                 results[i][0] = np.around(results[i][0],4)*100
+    #                 df_disease['trainer_' + str(i)] = results[i][0]
+    #             st.dataframe(df_disease.style.highlight_max(axis=0,color='pink',subset=['trainer_0','trainer_1','trainer_2','trainer_3','trainer_4']))
+    #             with st.spinner("Drawing heatmap..."):
+    #                 image,image_ori,image_scale = heatmap(selected_box,crop_image,Cam=EigenGradCAM) #GradCAM, \
+    #                                 #     ScoreCAM, \
+    #                                 #     GradCAMPlusPlus, \
+    #                                 #     AblationCAM, \
+    #                                 #     XGradCAM, \
+    #                                 #     EigenCAM, \
+    #                                 #     EigenGradCAM, \
+    #                                 #     LayerCAM, \
+    #                                 #     FullGrad
+    #                 c1,c2,c3 = st.columns(3)
+    #                 with c1:
+    #                     st.header('Original')
+    #                     st.image(image_ori)
+    #                 with c2:
+    #                     st.header('Scaled')
+    #                     st.image(image_scale)
+    #                 with c3:
+    #                     st.header('Heat-map')
+    #                     st.image(image)
 
     if selected_box == 'Efficient_B0_512':
         '''
         '''
+        load_model(selected_box)
+        st.success('Download Model ✔️ Done!!!')
         if selected_image:
             if st.sidebar.checkbox('Crop image',value=True):
                 crop_image = crop_image(selected_image)
@@ -211,9 +214,11 @@ if authentication_status:
                         st.header('Heat-map')
                         st.image(image)
 
-    if selected_box == 'Metadata_Efficient_B2_512':
+    if selected_box == 'Metadata':
         '''
         '''
+        load_model(selected_box)
+        st.success('Download Model ✔️ Done!!!')
         load_model(selected_box)
 
         if selected_image:
