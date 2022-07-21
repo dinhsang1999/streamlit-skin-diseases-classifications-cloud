@@ -87,7 +87,7 @@ if authentication_status:
     if selected_box == 'Select model':
         st.markdown("""
         <span style = 'font-size:20px;'> 
-        Let's sellect
+        Let's sellect your
         </span>
         <span style = 'color:#053D38;font-size:25px;'>
         Model
